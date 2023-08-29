@@ -15,11 +15,12 @@ class Dog(models.Model):
     def __str__(self):
         return self.dog_name
     
-    def add_trigger(self, trigger):
+    def add_trigger(self, trigger_pk):
+        trigger = Triggers.objects.get(pk=trigger_pk)
         self.triggers.add(trigger)
 
-    def remove_trigger(self, trigger):
-        self.triggers.remove(trigger)
+    def remove_trigger(self, trigger_pk):
+        self.triggers.remove(trigger_pk)
 
     def change_owner(self, owner):
         self.owner = owner
