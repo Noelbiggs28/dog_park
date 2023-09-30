@@ -7,3 +7,9 @@
 COMPOSE_DOCKER_CLI_BUILD=0 DOCKER_BUILDKIT=0 docker-compose up -d
 sleep 10
 docker exec dog_park-api-1 python manage.py migrate
+
+
+
+# docker stop $(docker ps -q)
+# docker rm $(docker ps -aq)
+# docker rmi $(docker images -q)
