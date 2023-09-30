@@ -21,5 +21,7 @@ urlpatterns = [
     path('dog/', include('dog_app.urls')),
     path('owner/', include('owner_app.urls')),
     path('parks/', include('park_app.urls')),
-    path('triggers/', include('triggers_app.urls'))
+    path('triggers/', include('triggers_app.urls')),
+    path('accounts/', include("accounts.urls")),
+    path('profile/', include("user_profile.urls"))
 ]

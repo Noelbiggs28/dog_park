@@ -10,6 +10,7 @@ from .models import Triggers
 
 
 class TriggerView(APIView):
+
     def get(self, request, pk=None):
         if pk is not None:
             trigger = get_object_or_404(Triggers, pk=pk)
@@ -27,3 +28,7 @@ class TriggerView(APIView):
         new_trigger = json.loads(serialize('json', [new_trigger]))
         return Response(new_trigger)
 
+    def delete(self, request, pk):
+        trigger = get_object_or_404(Triggers, pk=pk)
+        trigger.delete()
+        return Response('trigger was deleted')

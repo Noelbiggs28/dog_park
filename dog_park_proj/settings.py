@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-hg$$+6+whtaux#1uy5s+y-$i5&7o@l7(ddbyr)#f$io-gvjt%=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -42,10 +42,13 @@ INSTALLED_APPS = [
     'owner_app',
     'park_app',
     'triggers_app',
+    'rest_framework.authtoken',
+    'user_profile'
 
 ]
 
 MIDDLEWARE = [
+    'dog_park_proj.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -109,6 +112,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

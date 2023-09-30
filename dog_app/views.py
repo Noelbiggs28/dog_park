@@ -8,69 +8,56 @@ import json
 from django.shortcuts import get_object_or_404
 
 from .models import Dog
-from owner_app.models import Owner
+from user_profile.models import UserProfile
+from .serializers import DogSerializer
+class DogView(APIView): 
 
-
-
-class DogView(APIView):
-    def number_to_trigger_names(self, dog):
-        triggers = dog.triggers.all()
-        trigger_names = [trigger.trigger_name for trigger in triggers]
-        return trigger_names
-
-
-
-    def number_to_owner_name(self, dog):
-        owner = dog.owner
-        owner_name = owner.owners_name
-        return owner_name
-    
     def get(self, request, pk=None):
         if pk is not None:
-            # get dog
             dog = get_object_or_404(Dog, pk=pk)
-            # get owner name
-            owner_name = self.number_to_owner_name(dog)
-            trigger_names = self.number_to_trigger_names(dog)
-            # make dog jason
-            json_dog = json.loads(serialize('json', [dog]))[0]
-            # make dog owner a name
-            json_dog['fields']['owner'] = owner_name
-            json_dog['fields']['triggers'] = trigger_names
-
+            serializer = DogSerializer(dog)
         else:
             dogs = Dog.objects.order_by("pk")
-            dog_list = []
-            for dog in dogs:
-                owner_name=self.number_to_owner_name(dog)
-                trigger_names = self.number_to_trigger_names(dog)
-                json_dog = json.loads(serialize("json",[dog]))[0]
-                json_dog['fields']['owner']=owner_name
-                json_dog['fields']['triggers'] = trigger_names
-                dog_list.append(json_dog)
-            json_dog = dog_list
-        return Response(json_dog)
+            serializer = DogSerializer(dogs, many=True)
+        return Response(serializer.data)
 
-# need to fix direct assignment of many to many for triggers
     def post(self, request):
-        owner = Owner.objects.get(pk=request.data['owner'])
-        request.data['owner']=owner
+        owner=get_object_or_404(UserProfile, pk=request.data['owner'])
+        request.data['owner'] = owner
         dog = Dog.objects.create(**request.data)
         dog.save()
         dog.full_clean()
         dog = json.loads(serialize('json', [dog]))
-        return Response(dog)
+        return Response(f"{dog} created")
 
     
     def patch(self, request, pk):
-        dog = get_object_or_404(Dog, pk=pk)
-        owner_id = request.data.get('owner', [])
-        owner = Owner.objects.get(pk=owner_id)
-        if 'owner' in request.data:
-            dog.change_owner(owner)
+        dog = get_object_or_404(Dog, pk=pk) 
+        if 'age' in request.data:
+            dog.age =request.data.get('age',dog.age)
+        if 'dog_name' in request.data:
+            dog.dog_name = request.data.get('dog_name',dog.dog_name)
+        if 'description' in request.data:
+            dog.description= request.data.get('description',dog.description)
+        # elif 'triggers' in request.data:
+        #     dog.add_trigger(request.data.get('triggers'))
+        #     result_msg = "added trigger"
+        # elif 'untriggers' in request.data:
+        #     dog.remove_trigger(request.data.get('untriggers'))
+        #     result_msg = "removed trigger"
+        # elif 'likes' in request.data:
+        #     dog.add_like(request.data.get('likes'))
+        #     result_msg = "updated likes"
+        # elif "unlikes" in request.data:
+        #     dog.remove_like(request.data.get('unlikes'))
+        #     result_msg = "updated likes"
         dog.full_clean()
         dog.save()
-        result_msg = f"Dog {dog.dog_name} assigned to owner {owner.owners_name}"
         dog = json.loads(serialize('json',[dog]))
 
-        return Response(result_msg)
+        return Response("dog updated")
+
+    def delete(self, request, pk):
+        dog = get_object_or_404(Dog, pk=pk)
+        dog.delete()
+        return Response('dog was deleted')
