@@ -6,6 +6,13 @@ services:
       - "8000:8000"
     depends_on:
       - db
+  nginx:
+    build:
+      context: .
+      dockerfile: ./webserver/Dockerfile
+    restart: always
+    ports:
+      - "80:80"
   db:
     image: postgres:15
     environment:
