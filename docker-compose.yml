@@ -7,10 +7,7 @@ services:
     depends_on:
       - db
   nginx:
-    build:
-      context: .
-      dockerfile: ./webserver/Dockerfile
-    restart: always
+    image: noelbiggs28/dog_park
     ports:
       - "80:80"
   db:
