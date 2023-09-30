@@ -55,7 +55,7 @@ class DogView(APIView):
         dog.save()
         dog = json.loads(serialize('json',[dog]))
 
-        return Response("dog updated")
+        return Response(dog)
 
     def delete(self, request, pk):
         dog = get_object_or_404(Dog, pk=pk)
