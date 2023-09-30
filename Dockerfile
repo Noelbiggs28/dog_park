@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD gunicorn --bind 0.0.0.0:8000 --workers 3 dogs_proj.wsgi:application
+CMD gunicorn --bind 0.0.0.0:8000 --workers 3 dog_park_proj.wsgi:application
